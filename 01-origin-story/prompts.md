@@ -24,6 +24,12 @@ prompt library built from your own questions.
 
 ### 1.
 
+how does routing in 00-rook/code/dispatch-routing/ work?
+
 ### 2.
 
+what seems inconsistent across the files you have access to?
+
 ### 3.
+
+what is filter persistence? can you tell how it works from the code?
