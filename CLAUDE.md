@@ -144,3 +144,9 @@ PM for 14 months and made calls faster than she checked them.
   down, but scoring treats them the same; "monthly" releases are really ~2-monthly
   and no 4.3 is listed; Ashgrove's "phone silent 3 days" ticket doesn't match his
   ping counts (unchecked).
+- Module 1 status (13 Oct): everything above comes from files, the wiki and the
+  database; no teammate has been consulted yet, so the mechanism is unconfirmed.
+- Sources that mattered most: the 4.2 page comments, the pings table, `config.py`
+  and `history.py`, and the Aunt Dot and Kip interviews.
+- Priya's handover never mentions Ravi or Sofia; Ravi (weekly numbers) is the
+  obvious first person to ask.

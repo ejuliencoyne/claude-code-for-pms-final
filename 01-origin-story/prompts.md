@@ -33,3 +33,11 @@ what seems inconsistent across the files you have access to?
 ### 3.
 
 what is filter persistence? can you tell how it works from the code?
+
+### 4.
+
+interviews and weekly numbers please
+
+### 5.
+
+wondering - where are you finding the rook wiki information?
