@@ -142,11 +142,29 @@ PM for 14 months and made calls faster than she checked them.
   the routing logic Priya never did.
 - Known inconsistencies: glossary says missed is recorded separately from turned
   down, but scoring treats them the same; "monthly" releases are really ~2-monthly
-  and no 4.3 is listed; Ashgrove's "phone silent 3 days" ticket doesn't match his
-  ping counts (unchecked).
+  and no 4.3 is listed; Ashgrove's "phone silent 3 days" ticket (#3070) does match
+  his pings (17 Aug evening to 20 Aug evening), so that is not an inconsistency.
 - Module 1 status (13 Oct): everything above comes from files, the wiki and the
   database; no teammate has been consulted yet, so the mechanism is unconfirmed.
 - Sources that mattered most: the 4.2 page comments, the pings table, `config.py`
   and `history.py`, and the Aunt Dot and Kip interviews.
 - Priya's handover never mentions Ravi or Sofia; Ravi (weekly numbers) is the
   obvious first person to ask.
+- Module 2 (13 Oct): interviews + tickets agree on two issues. (1) Callouts gone before
+  the responder can answer: 15 tickets, 11 responders, from 12 Aug (60 s ping wait).
+  (2) Quiet/starved responders: 30 tickets, Farlight and The Undertow collapsed (last
+  taken 14 and 17 Aug); Meteor Mite and Vesper collapsed the same way but their
+  handlers (Kip, Aunt Dot) filed zero tickets, so ticket counts understate severity.
+  Ashgrove and Halfmoon only dipped (~10 to 7-8 a week) and recovered.
+- Pings: no ping ID or ranking score, but (callout, responder) is unique and sent_at
+  gives order. The Gale was pinged on all 16 Eastgate callouts in the week of 24 Aug,
+  Mite on 1; The Gale rose 13 to 21 a week while Mite fell 11 to 1. Untaken callouts
+  doubled (5.5% to 11.1%); 41181 and 41193 ended after one ping, cause unknown.
+- Location data is coarse: only home `area` for responders and callouts. Travel-time
+  source and what "available"/"region" mean are in a stub (`availability.py`), unknown.
+  Proximity formula (1 - minutes/45) did not change in 4.2, only its weight (0.45 to 0.60).
+- Interview vs ticket gaps: Ambrose's incident dated 12 Aug (ticket) vs "two weeks ago"
+  (interview); Dot sees quiet/fast weeks as alternating, data shows fast first then quiet;
+  Halloran says maintenance scheduling improved but tickets #3054, #3109 say otherwise.
+- Open next: ask Wen for the travel-time source, availability/region rules, and why
+  Mite is never pinged; ask Ravi for newer weeks and the untaken-callout rate.
