@@ -1,0 +1,153 @@
+callout_number,ping_order,responder,sent_at,outcome
+40101,1,The Longcast,2026-06-29 00:05:03,turned down
+40101,2,Vesper,2026-06-29 00:05:14,taken
+40126,1,Vesper,2026-06-30 15:05:59,turned down
+40126,2,Captain Vantage,2026-06-30 15:06:13,turned down
+40126,3,Nightwell,2026-06-30 15:06:42,taken
+40129,1,Vesper,2026-06-30 19:17:35,taken
+40146,1,Vesper,2026-07-01 13:29:24,taken
+40155,1,Vesper,2026-07-01 19:25:00,taken
+40157,1,Vesper,2026-07-01 20:17:39,taken
+40173,1,Vesper,2026-07-02 08:43:41,taken
+40179,1,Vesper,2026-07-02 15:38:56,taken
+40188,1,The Longcast,2026-07-03 07:28:31,turned down
+40188,2,Vesper,2026-07-03 07:28:48,taken
+40192,1,Vesper,2026-07-03 14:51:08,taken
+40205,1,Vesper,2026-07-03 20:11:11,turned down
+40205,2,The Longcast,2026-07-03 20:11:25,taken
+40209,1,Vesper,2026-07-04 01:00:59,taken
+40219,1,Nightwell,2026-07-04 14:16:19,turned down
+40219,2,Vesper,2026-07-04 14:16:59,taken
+40239,1,Vesper,2026-07-05 22:04:58,turned down
+40249,1,The Longcast,2026-07-06 08:44:59,missed
+40249,2,Vesper,2026-07-06 08:46:30,taken
+40265,1,Vesper,2026-07-07 02:00:13,missed
+40265,2,The Longcast,2026-07-07 02:01:44,taken
+40280,1,Captain Vantage,2026-07-07 18:39:11,turned down
+40280,2,Vesper,2026-07-07 18:39:49,taken
+40285,1,Vesper,2026-07-07 20:56:40,taken
+40301,1,Vesper,2026-07-08 17:10:39,taken
+40327,1,Vesper,2026-07-09 23:00:48,taken
+40342,1,Vesper,2026-07-11 13:47:05,taken
+40344,1,Vesper,2026-07-11 14:16:15,turned down
+40344,2,Nightwell,2026-07-11 14:16:43,taken
+40345,1,Vesper,2026-07-11 15:03:21,taken
+40351,1,Captain Vantage,2026-07-11 21:20:33,turned down
+40351,2,Vesper,2026-07-11 21:20:45,taken
+40352,1,Vesper,2026-07-11 21:29:50,turned down
+40352,2,Nightwell,2026-07-11 21:30:01,taken
+40359,1,Vesper,2026-07-12 10:55:27,taken
+40372,1,Vesper,2026-07-12 16:07:57,taken
+40384,1,Vesper,2026-07-13 02:10:23,taken
+40397,1,Vesper,2026-07-13 18:24:32,taken
+40399,1,Vesper,2026-07-13 18:39:15,taken
+40414,1,Vesper,2026-07-14 19:11:38,taken
+40420,1,Captain Vantage,2026-07-15 12:08:39,turned down
+40420,2,Vesper,2026-07-15 12:08:45,taken
+40433,1,Vesper,2026-07-15 19:50:58,taken
+40434,1,Vesper,2026-07-15 19:57:09,taken
+40448,1,Vesper,2026-07-16 19:02:51,turned down
+40448,2,The Longcast,2026-07-16 19:03:12,taken
+40454,1,Vesper,2026-07-16 21:25:42,taken
+40466,1,Vesper,2026-07-17 17:26:30,taken
+40472,1,Vesper,2026-07-17 19:27:31,missed
+40472,2,Nightwell,2026-07-17 19:29:03,taken
+40474,1,Vesper,2026-07-17 20:15:14,taken
+40502,1,Vesper,2026-07-19 13:50:44,taken
+40505,1,Vesper,2026-07-19 15:58:37,taken
+40508,1,Vesper,2026-07-19 19:37:56,taken
+40525,1,Vesper,2026-07-20 09:46:52,turned down
+40525,2,Nightwell,2026-07-20 09:47:31,taken
+40526,1,Vesper,2026-07-20 10:13:04,turned down
+40526,2,Captain Vantage,2026-07-20 10:13:37,taken
+40537,1,The Longcast,2026-07-20 21:18:43,turned down
+40537,2,Vesper,2026-07-20 21:19:02,taken
+40550,1,Vesper,2026-07-22 01:55:31,taken
+40558,1,Vesper,2026-07-22 11:20:24,taken
+40559,1,Vesper,2026-07-22 11:28:07,taken
+40563,1,Vesper,2026-07-22 16:56:45,taken
+40566,1,Vesper,2026-07-22 18:22:25,taken
+40586,1,Vesper,2026-07-23 16:56:21,taken
+40597,1,Captain Vantage,2026-07-24 01:05:56,missed
+40597,2,Nightwell,2026-07-24 01:07:28,missed
+40597,3,Vesper,2026-07-24 01:09:01,taken
+40634,1,Vesper,2026-07-25 15:50:28,taken
+40638,1,Vesper,2026-07-25 19:14:51,turned down
+40638,2,Nightwell,2026-07-25 19:15:09,taken
+40645,1,Vesper,2026-07-26 01:05:13,taken
+40662,1,Vesper,2026-07-26 23:08:01,taken
+40670,1,Vesper,2026-07-27 08:33:21,taken
+40687,1,Vesper,2026-07-27 20:46:37,taken
+40693,1,Vesper,2026-07-28 07:21:36,taken
+40696,1,Vesper,2026-07-28 11:33:09,taken
+40699,1,Vesper,2026-07-28 14:48:20,taken
+40712,1,The Longcast,2026-07-29 03:31:14,turned down
+40712,2,Vesper,2026-07-29 03:31:38,taken
+40727,1,Vesper,2026-07-30 02:29:21,missed
+40727,2,Captain Vantage,2026-07-30 02:30:52,taken
+40729,1,Vesper,2026-07-30 07:48:26,taken
+40732,1,Vesper,2026-07-30 13:24:32,taken
+40743,1,Vesper,2026-07-30 23:17:13,taken
+40748,1,Vesper,2026-07-31 11:28:08,taken
+40752,1,Vesper,2026-07-31 16:59:59,taken
+40774,1,Vesper,2026-08-01 19:12:49,turned down
+40774,2,Nightwell,2026-08-01 19:13:17,taken
+40817,1,Vesper,2026-08-04 06:44:58,taken
+40823,1,Vesper,2026-08-04 15:09:29,taken
+40824,1,Vesper,2026-08-04 15:16:10,taken
+40827,1,Vesper,2026-08-04 18:04:04,taken
+40849,1,The Longcast,2026-08-05 16:49:56,turned down
+40849,2,Vesper,2026-08-05 16:50:17,taken
+40856,1,Vesper,2026-08-05 20:25:51,taken
+40865,1,Vesper,2026-08-06 05:48:50,taken
+40866,1,Vesper,2026-08-06 09:43:10,taken
+40869,1,Vesper,2026-08-06 12:15:42,turned down
+40869,2,Nightwell,2026-08-06 12:16:18,taken
+40876,1,Vesper,2026-08-06 17:48:35,taken
+40891,1,Vesper,2026-08-07 12:57:50,taken
+40897,1,Vesper,2026-08-07 17:07:09,taken
+40900,1,Vesper,2026-08-07 17:55:23,turned down
+40900,2,Nightwell,2026-08-07 17:55:29,taken
+40921,1,Vesper,2026-08-08 19:51:57,taken
+40938,1,Vesper,2026-08-10 02:01:40,taken
+40945,1,Vesper,2026-08-10 13:33:28,turned down
+40975,1,Vesper,2026-08-11 21:00:33,taken
+40992,1,Vesper,2026-08-13 07:34:58,missed
+40992,2,Halfmoon,2026-08-13 07:36:00,missed
+40992,3,The Longcast,2026-08-13 07:37:02,taken
+41006,1,The Longcast,2026-08-14 02:53:02,turned down
+41006,2,Nightwell,2026-08-14 02:53:24,turned down
+41006,3,Vesper,2026-08-14 02:53:46,taken
+41017,1,Vesper,2026-08-14 17:10:16,missed
+41017,2,Captain Vantage,2026-08-14 17:11:19,taken
+41023,1,Nightwell,2026-08-15 13:01:38,turned down
+41023,2,The Longcast,2026-08-15 13:01:48,turned down
+41023,3,Vesper,2026-08-15 13:02:09,taken
+41026,1,Vesper,2026-08-15 15:33:56,turned down
+41026,2,Nightwell,2026-08-15 15:34:13,taken
+41034,1,The Longcast,2026-08-15 20:56:04,missed
+41034,2,Nightwell,2026-08-15 20:57:07,missed
+41034,3,Vesper,2026-08-15 20:58:08,taken
+41039,1,Vesper,2026-08-16 10:46:31,missed
+41039,2,Captain Vantage,2026-08-16 10:47:34,taken
+41042,1,Vesper,2026-08-16 14:05:10,missed
+41042,2,Captain Vantage,2026-08-16 14:06:13,taken
+41043,1,Captain Vantage,2026-08-16 16:03:13,turned down
+41043,2,Vesper,2026-08-16 16:03:23,taken
+41050,1,Nightwell,2026-08-17 08:54:20,missed
+41050,2,Vesper,2026-08-17 08:55:21,taken
+41102,1,Vesper,2026-08-19 18:42:37,missed
+41102,2,The Longcast,2026-08-19 18:43:40,taken
+41153,1,Vesper,2026-08-23 00:10:19,missed
+41153,2,Nightwell,2026-08-23 00:11:22,missed
+41153,3,Captain Vantage,2026-08-23 00:12:25,taken
+41155,1,Vesper,2026-08-23 05:34:55,turned down
+41155,2,Nightwell,2026-08-23 05:35:27,taken
+41165,1,Halfmoon,2026-08-23 20:14:35,missed
+41165,2,Vesper,2026-08-23 20:15:38,missed
+41165,3,The Longcast,2026-08-23 20:16:41,taken
+41186,1,Vesper,2026-08-24 21:40:13,turned down
+41214,1,Vesper,2026-08-26 18:09:13,missed
+41311,1,Vesper,2026-09-01 11:42:44,missed
+41311,2,Captain Vantage,2026-09-01 11:43:47,turned down
+41311,3,Nightwell,2026-09-01 11:44:10,taken
