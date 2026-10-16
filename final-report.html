@@ -55,8 +55,8 @@
   iframe{width:100%;height:540px;border:1px solid var(--line);border-radius:12px;background:#fff}
   .checks{display:grid;gap:10px}
   .chk{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-  .chk .no{flex:none;width:44px;text-align:center;font-weight:800;font-size:12px;border-radius:6px;padding:4px 0}
-  .y{background:#173b2c;color:var(--green)}.n{background:#4a1f1c;color:var(--red)}
+  .chk .bdg{flex:none;width:44px;text-align:center;font-weight:800;font-size:12px;border-radius:6px;padding:4px 0}
+  .pass{background:#173b2c;color:var(--green)}.fail{background:#4a1f1c;color:var(--red)}
   table{border-collapse:collapse;width:100%;font-size:14px}
   th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:center}
   th:first-child,td:first-child{text-align:left}
@@ -183,9 +183,457 @@
     <div class="prompt"><span class="tag">Module 5 · prompt 20</span><q>“Take the brief you just wrote and build me two working prototypes, one for the handler perspective and one for the responder perspective, actual screens I can click through, not a description of one. Save them as 05-super-speed/prototype-handler.html and 05-super-speed/prototype-responder.html, files I can just open in my browser. Show me where this would actually happen, and make at least one thing on it respond when I click it.”</q></div>
     <div class="finding"><span class="tag">Artifact</span>Two clickable prototypes (live below). Meteor Mite and The Gale's weekly counts and Meteor Mite's last 10 pings are real data from the pings table; callout details and support text are invented.</div>
   </div>
-  <div class="tabs"><button class="on" data-f="05-super-speed/prototype-handler.html">Handler console</button><button data-f="05-super-speed/prototype-responder.html">Responder phone</button></div>
-  <iframe id="proto" src="05-super-speed/prototype-handler.html" title="Prototype"></iframe>
-  <p class="mute" style="font-size:13px">Click a responder, open the flag, try the report tabs. If the frame is blank, open the file directly from the repo folder.</p>
+  <div class="tabs"><button class="on" data-f="handler">Handler console</button><button data-f="responder">Responder phone</button></div>
+  <iframe id="proto" title="Prototype" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;Rook Dispatch console – Handler prototype&lt;/title&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;style&gt;
+  :root { --ink:#1c2430; --mute:#6b7685; --line:#e1e5eb; --bg:#f4f6f9; --brand:#1f3a5f;
+          --taken:#2f7d4f; --missed:#d9822b; --down:#8a93a3; --warn:#b4351f; --warnbg:#fdecea; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--brand); color:#fff; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; }
+  header b { font-size:16px; letter-spacing:.3px; }
+  header span { opacity:.8; font-size:13px; }
+  .banner { background:#fff8e1; border-bottom:1px solid #f0e2a8; padding:6px 20px; font-size:12px; color:#6b5a14; }
+  main { display:grid; grid-template-columns:300px 1fr; gap:16px; padding:16px 20px; max-width:1100px; margin:auto; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:8px; }
+  .panel h2 { margin:0; padding:12px 14px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--mute); border-bottom:1px solid var(--line); }
+  .resp { display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--line); padding:12px 14px; cursor:pointer; font:inherit; color:inherit; }
+  .resp:hover { background:#f7f9fc; }
+  .resp.sel { background:#eaf0f8; box-shadow:inset 3px 0 var(--brand); }
+  .resp .name { font-weight:600; font-size:15px; }
+  .resp .sub { color:var(--mute); font-size:12px; margin-top:2px; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; margin-left:6px; vertical-align:1px; }
+  .tag.flag { background:var(--warnbg); color:var(--warn); }
+  .tag.ok { background:#e6f3ea; color:var(--taken); }
+  .detail { padding:16px 18px; }
+  .detail h1 { margin:0 0 2px; font-size:20px; }
+  .meta { color:var(--mute); font-size:12px; margin-bottom:14px; }
+  .flagbox { background:var(--warnbg); border:1px solid #f1b9b0; border-radius:8px; padding:12px 14px; margin-bottom:16px; }
+  .flagbox strong { color:var(--warn); }
+  .flagbox p { margin:4px 0 8px; }
+  .btn { font:inherit; border:1px solid var(--brand); background:var(--brand); color:#fff; border-radius:6px; padding:6px 12px; cursor:pointer; }
+  .btn.ghost { background:#fff; color:var(--brand); }
+  .btn:hover { opacity:.9; }
+  .help { margin-top:10px; padding:10px 12px; background:#fff; border:1px solid #f1b9b0; border-radius:6px; display:none; }
+  .help.open { display:block; }
+  .help pre { background:#f4f6f9; padding:8px; border-radius:6px; white-space:pre-wrap; font:12px/1.4 ui-monospace,Menlo,monospace; margin:6px 0; }
+  .tabs { display:flex; gap:6px; margin:0 0 10px; }
+  .tabs button { font:inherit; padding:5px 12px; border:1px solid var(--line); background:#fff; border-radius:6px; cursor:pointer; }
+  .tabs button.on { background:var(--brand); color:#fff; border-color:var(--brand); }
+  table { width:100%; border-collapse:collapse; }
+  th, td { padding:7px 8px; text-align:right; border-bottom:1px solid var(--line); }
+  th:first-child, td:first-child { text-align:left; }
+  th { font-size:12px; color:var(--mute); font-weight:600; }
+  tr.low td { background:#fff6f4; }
+  .chart { display:flex; align-items:flex-end; gap:10px; height:200px; padding:10px 4px 0; border-bottom:1px solid var(--line); }
+  .col { flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; }
+  .col .stack { width:70%; display:flex; flex-direction:column-reverse; }
+  .col .seg { width:100%; }
+  .col .n { font-size:11px; color:var(--mute); margin-bottom:2px; }
+  .labels { display:flex; gap:10px; padding:4px; font-size:11px; color:var(--mute); }
+  .labels div { flex:1; text-align:center; }
+  .legend { display:flex; gap:14px; font-size:12px; margin-top:8px; color:var(--mute); }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; }
+  .note { font-size:12px; color:var(--mute); margin-top:10px; }
+  .cmp { margin-top:14px; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header&gt;&lt;b&gt;Rook Dispatch · Console&lt;/b&gt;&lt;span&gt;Signed in as Kip (handler)&lt;/span&gt;&lt;/header&gt;
+&lt;div class=&quot;banner&quot;&gt;Prototype for review. Weekly counts are real figures from the pings table (weeks starting 13 Jul – 31 Aug 2026). The flag, report and Support wording are proposed, not built.&lt;/div&gt;
+&lt;main&gt;
+  &lt;section class=&quot;panel&quot;&gt;
+    &lt;h2&gt;Your responders&lt;/h2&gt;
+    &lt;div id=&quot;list&quot;&gt;&lt;/div&gt;
+  &lt;/section&gt;
+  &lt;section class=&quot;panel detail&quot; id=&quot;detail&quot;&gt;&lt;/section&gt;
+&lt;/main&gt;
+
+&lt;script&gt;
+const weeks = [&quot;13 Jul&quot;,&quot;20 Jul&quot;,&quot;27 Jul&quot;,&quot;3 Aug&quot;,&quot;10 Aug&quot;,&quot;17 Aug&quot;,&quot;24 Aug&quot;,&quot;31 Aug&quot;];
+// [pings, taken, missed, turned down] — from the pings table
+const data = {
+  &quot;Meteor Mite&quot;: { area:&quot;Eastgate&quot;, rows:[[10,6,0,4],[11,7,1,3],[12,9,1,2],[11,8,0,3],[10,4,4,2],[4,1,2,1],[2,0,1,1],[1,0,1,0]] },
+  &quot;The Gale&quot;:    { area:&quot;Eastgate&quot;, rows:[[13,10,0,3],[14,11,1,2],[13,11,1,1],[13,10,0,3],[15,9,3,3],[17,12,2,3],[20,14,2,4],[21,16,2,3]] }
+};
+const THRESHOLD = 0.5;
+function usual(r){ const a=r.slice(0,4); return a.reduce((s,x)=&gt;s+x[0],0)/4; }
+function isFlagged(name){ const r=data[name].rows; return r[7][0] &lt; THRESHOLD*usual(r); }
+
+let current = &quot;Meteor Mite&quot;, view = &quot;table&quot;;
+
+function renderList(){
+  document.getElementById(&quot;list&quot;).innerHTML = Object.keys(data).map(n=&gt;{
+    const r=data[n].rows, f=isFlagged(n);
+    return `&lt;button class=&quot;resp ${n===current?&#x27;sel&#x27;:&#x27;&#x27;}&quot; data-n=&quot;${n}&quot;&gt;
+      &lt;div class=&quot;name&quot;&gt;${n}${f?&#x27;&lt;span class=&quot;tag flag&quot;&gt;Receiving fewer pings&lt;/span&gt;&#x27;:&#x27;&lt;span class=&quot;tag ok&quot;&gt;Normal&lt;/span&gt;&#x27;}&lt;/div&gt;
+      &lt;div class=&quot;sub&quot;&gt;${data[n].area} · ${r[7][0]} pings in latest week&lt;/div&gt;&lt;/button&gt;`;
+  }).join(&quot;&quot;);
+  document.querySelectorAll(&quot;.resp&quot;).forEach(b=&gt;b.onclick=()=&gt;{ current=b.dataset.n; render(); });
+}
+
+function flagHTML(n){
+  const r=data[n].rows, u=+usual(r).toFixed(1);
+  return `&lt;div class=&quot;flagbox&quot;&gt;
+    &lt;strong&gt;Receiving fewer pings&lt;/strong&gt;
+    &lt;p&gt;${n} had &lt;b&gt;${r[7][0]}&lt;/b&gt; ${r[7][0]===1?&#x27;ping&#x27;:&#x27;pings&#x27;} in the latest week, against a usual &lt;b&gt;${u}&lt;/b&gt; a week
+    (the average of the four weeks from 13 Jul). That is below the ${Math.round(THRESHOLD*100)}% flag level. The drop began in the week of 10 Aug.&lt;/p&gt;
+    &lt;button class=&quot;btn&quot; id=&quot;helpBtn&quot;&gt;What can I do?&lt;/button&gt;
+    &lt;div class=&quot;help&quot; id=&quot;help&quot;&gt;
+      &lt;b&gt;Contact Rook Support&lt;/b&gt; if you want this looked at. They can check the case and decide what to do, including a score reset.
+      &lt;pre id=&quot;summary&quot;&gt;Responder: ${n} (${data[n].area}), handler Kip
+Latest week: ${r[7][0]} pings vs usual ${u}
+Weeks 10 Aug to 31 Aug: pings ${r.slice(4).map(x=&gt;x[0]).join(&quot;, &quot;)}; missed ${r.slice(4).map(x=&gt;x[2]).join(&quot;, &quot;)}
+Last callout taken: week of 17 Aug&lt;/pre&gt;
+      &lt;button class=&quot;btn ghost&quot; id=&quot;copyBtn&quot;&gt;Copy this summary for Support&lt;/button&gt;
+      &lt;span id=&quot;copied&quot; style=&quot;margin-left:8px;color:var(--taken);display:none&quot;&gt;Copied&lt;/span&gt;
+    &lt;/div&gt;&lt;/div&gt;`;
+}
+
+function reportHTML(n){
+  const r=data[n].rows, u=usual(r);
+  if (view===&quot;table&quot;) {
+    return `&lt;table&gt;&lt;tr&gt;&lt;th&gt;Week starting&lt;/th&gt;&lt;th&gt;Pings received&lt;/th&gt;&lt;th&gt;Taken&lt;/th&gt;&lt;th&gt;Missed&lt;/th&gt;&lt;th&gt;Turned down&lt;/th&gt;&lt;/tr&gt;`+
+      r.map((x,i)=&gt;`&lt;tr class=&quot;${x[0]&lt;THRESHOLD*u?&#x27;low&#x27;:&#x27;&#x27;}&quot;&gt;&lt;td&gt;${weeks[i]}&lt;/td&gt;&lt;td&gt;&lt;b&gt;${x[0]}&lt;/b&gt;&lt;/td&gt;&lt;td&gt;${x[1]}&lt;/td&gt;&lt;td&gt;${x[2]}&lt;/td&gt;&lt;td&gt;${x[3]}&lt;/td&gt;&lt;/tr&gt;`).join(&quot;&quot;)+`&lt;/table&gt;`;
+  }
+  const max=Math.max(...Object.values(data).flatMap(d=&gt;d.rows.map(x=&gt;x[0])));
+  const h=170;
+  return `&lt;div class=&quot;chart&quot;&gt;`+r.map(x=&gt;`&lt;div class=&quot;col&quot;&gt;&lt;div class=&quot;n&quot;&gt;${x[0]}&lt;/div&gt;&lt;div class=&quot;stack&quot;&gt;
+      &lt;div class=&quot;seg&quot; style=&quot;height:${x[1]/max*h}px;background:var(--taken)&quot; title=&quot;Taken ${x[1]}&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;seg&quot; style=&quot;height:${x[2]/max*h}px;background:var(--missed)&quot; title=&quot;Missed ${x[2]}&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;seg&quot; style=&quot;height:${x[3]/max*h}px;background:var(--down)&quot; title=&quot;Turned down ${x[3]}&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;`).join(&quot;&quot;)+`&lt;/div&gt;
+    &lt;div class=&quot;labels&quot;&gt;${weeks.map(w=&gt;`&lt;div&gt;${w}&lt;/div&gt;`).join(&quot;&quot;)}&lt;/div&gt;
+    &lt;div class=&quot;legend&quot;&gt;&lt;span&gt;&lt;i style=&quot;background:var(--taken)&quot;&gt;&lt;/i&gt;Taken&lt;/span&gt;&lt;span&gt;&lt;i style=&quot;background:var(--missed)&quot;&gt;&lt;/i&gt;Missed&lt;/span&gt;&lt;span&gt;&lt;i style=&quot;background:var(--down)&quot;&gt;&lt;/i&gt;Turned down&lt;/span&gt;&lt;/div&gt;`;
+}
+
+function render(){
+  renderList();
+  const n=current;
+  document.getElementById(&quot;detail&quot;).innerHTML = `
+    &lt;h1&gt;${n}&lt;/h1&gt;&lt;div class=&quot;meta&quot;&gt;${data[n].area} · Weekly ping report, last 8 weeks&lt;/div&gt;
+    ${isFlagged(n)?flagHTML(n):&#x27;&#x27;}
+    &lt;div class=&quot;tabs&quot;&gt;&lt;button data-v=&quot;table&quot; class=&quot;${view===&#x27;table&#x27;?&#x27;on&#x27;:&#x27;&#x27;}&quot;&gt;Table&lt;/button&gt;&lt;button data-v=&quot;chart&quot; class=&quot;${view===&#x27;chart&#x27;?&#x27;on&#x27;:&#x27;&#x27;}&quot;&gt;Chart&lt;/button&gt;&lt;/div&gt;
+    ${reportHTML(n)}
+    &lt;div class=&quot;note&quot;&gt;Shaded rows are weeks below ${Math.round(THRESHOLD*100)}% of the responder&#x27;s usual. Counts only, and no personal details.
+    ${n===&quot;Meteor Mite&quot;?&#x27;Compare with &lt;a href=&quot;#&quot; id=&quot;cmpLink&quot;&gt;The Gale&lt;/a&gt;, who shares Eastgate and your console.&#x27;:&#x27;Compare with &lt;a href=&quot;#&quot; id=&quot;cmpLink&quot;&gt;Meteor Mite&lt;/a&gt;, who shares Eastgate and your console.&#x27;}&lt;/div&gt;`;
+  document.querySelectorAll(&quot;.tabs button&quot;).forEach(b=&gt;b.onclick=()=&gt;{ view=b.dataset.v; render(); });
+  const hb=document.getElementById(&quot;helpBtn&quot;);
+  if(hb){ hb.onclick=()=&gt;document.getElementById(&quot;help&quot;).classList.toggle(&quot;open&quot;);
+    document.getElementById(&quot;copyBtn&quot;).onclick=()=&gt;{
+      const t=document.getElementById(&quot;summary&quot;).textContent;
+      (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).catch(()=&gt;{}).finally(()=&gt;{ document.getElementById(&quot;copied&quot;).style.display=&quot;inline&quot;; });
+    }; }
+  document.getElementById(&quot;cmpLink&quot;).onclick=e=&gt;{ e.preventDefault(); current = n===&quot;Meteor Mite&quot;?&quot;The Gale&quot;:&quot;Meteor Mite&quot;; render(); };
+}
+render();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+<template id="doc-handler">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;Rook Dispatch console – Handler prototype&lt;/title&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;style&gt;
+  :root { --ink:#1c2430; --mute:#6b7685; --line:#e1e5eb; --bg:#f4f6f9; --brand:#1f3a5f;
+          --taken:#2f7d4f; --missed:#d9822b; --down:#8a93a3; --warn:#b4351f; --warnbg:#fdecea; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--brand); color:#fff; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; }
+  header b { font-size:16px; letter-spacing:.3px; }
+  header span { opacity:.8; font-size:13px; }
+  .banner { background:#fff8e1; border-bottom:1px solid #f0e2a8; padding:6px 20px; font-size:12px; color:#6b5a14; }
+  main { display:grid; grid-template-columns:300px 1fr; gap:16px; padding:16px 20px; max-width:1100px; margin:auto; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:8px; }
+  .panel h2 { margin:0; padding:12px 14px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--mute); border-bottom:1px solid var(--line); }
+  .resp { display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--line); padding:12px 14px; cursor:pointer; font:inherit; color:inherit; }
+  .resp:hover { background:#f7f9fc; }
+  .resp.sel { background:#eaf0f8; box-shadow:inset 3px 0 var(--brand); }
+  .resp .name { font-weight:600; font-size:15px; }
+  .resp .sub { color:var(--mute); font-size:12px; margin-top:2px; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; margin-left:6px; vertical-align:1px; }
+  .tag.flag { background:var(--warnbg); color:var(--warn); }
+  .tag.ok { background:#e6f3ea; color:var(--taken); }
+  .detail { padding:16px 18px; }
+  .detail h1 { margin:0 0 2px; font-size:20px; }
+  .meta { color:var(--mute); font-size:12px; margin-bottom:14px; }
+  .flagbox { background:var(--warnbg); border:1px solid #f1b9b0; border-radius:8px; padding:12px 14px; margin-bottom:16px; }
+  .flagbox strong { color:var(--warn); }
+  .flagbox p { margin:4px 0 8px; }
+  .btn { font:inherit; border:1px solid var(--brand); background:var(--brand); color:#fff; border-radius:6px; padding:6px 12px; cursor:pointer; }
+  .btn.ghost { background:#fff; color:var(--brand); }
+  .btn:hover { opacity:.9; }
+  .help { margin-top:10px; padding:10px 12px; background:#fff; border:1px solid #f1b9b0; border-radius:6px; display:none; }
+  .help.open { display:block; }
+  .help pre { background:#f4f6f9; padding:8px; border-radius:6px; white-space:pre-wrap; font:12px/1.4 ui-monospace,Menlo,monospace; margin:6px 0; }
+  .tabs { display:flex; gap:6px; margin:0 0 10px; }
+  .tabs button { font:inherit; padding:5px 12px; border:1px solid var(--line); background:#fff; border-radius:6px; cursor:pointer; }
+  .tabs button.on { background:var(--brand); color:#fff; border-color:var(--brand); }
+  table { width:100%; border-collapse:collapse; }
+  th, td { padding:7px 8px; text-align:right; border-bottom:1px solid var(--line); }
+  th:first-child, td:first-child { text-align:left; }
+  th { font-size:12px; color:var(--mute); font-weight:600; }
+  tr.low td { background:#fff6f4; }
+  .chart { display:flex; align-items:flex-end; gap:10px; height:200px; padding:10px 4px 0; border-bottom:1px solid var(--line); }
+  .col { flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; }
+  .col .stack { width:70%; display:flex; flex-direction:column-reverse; }
+  .col .seg { width:100%; }
+  .col .n { font-size:11px; color:var(--mute); margin-bottom:2px; }
+  .labels { display:flex; gap:10px; padding:4px; font-size:11px; color:var(--mute); }
+  .labels div { flex:1; text-align:center; }
+  .legend { display:flex; gap:14px; font-size:12px; margin-top:8px; color:var(--mute); }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; }
+  .note { font-size:12px; color:var(--mute); margin-top:10px; }
+  .cmp { margin-top:14px; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header&gt;&lt;b&gt;Rook Dispatch · Console&lt;/b&gt;&lt;span&gt;Signed in as Kip (handler)&lt;/span&gt;&lt;/header&gt;
+&lt;div class=&quot;banner&quot;&gt;Prototype for review. Weekly counts are real figures from the pings table (weeks starting 13 Jul – 31 Aug 2026). The flag, report and Support wording are proposed, not built.&lt;/div&gt;
+&lt;main&gt;
+  &lt;section class=&quot;panel&quot;&gt;
+    &lt;h2&gt;Your responders&lt;/h2&gt;
+    &lt;div id=&quot;list&quot;&gt;&lt;/div&gt;
+  &lt;/section&gt;
+  &lt;section class=&quot;panel detail&quot; id=&quot;detail&quot;&gt;&lt;/section&gt;
+&lt;/main&gt;
+
+&lt;script&gt;
+const weeks = [&quot;13 Jul&quot;,&quot;20 Jul&quot;,&quot;27 Jul&quot;,&quot;3 Aug&quot;,&quot;10 Aug&quot;,&quot;17 Aug&quot;,&quot;24 Aug&quot;,&quot;31 Aug&quot;];
+// [pings, taken, missed, turned down] — from the pings table
+const data = {
+  &quot;Meteor Mite&quot;: { area:&quot;Eastgate&quot;, rows:[[10,6,0,4],[11,7,1,3],[12,9,1,2],[11,8,0,3],[10,4,4,2],[4,1,2,1],[2,0,1,1],[1,0,1,0]] },
+  &quot;The Gale&quot;:    { area:&quot;Eastgate&quot;, rows:[[13,10,0,3],[14,11,1,2],[13,11,1,1],[13,10,0,3],[15,9,3,3],[17,12,2,3],[20,14,2,4],[21,16,2,3]] }
+};
+const THRESHOLD = 0.5;
+function usual(r){ const a=r.slice(0,4); return a.reduce((s,x)=&gt;s+x[0],0)/4; }
+function isFlagged(name){ const r=data[name].rows; return r[7][0] &lt; THRESHOLD*usual(r); }
+
+let current = &quot;Meteor Mite&quot;, view = &quot;table&quot;;
+
+function renderList(){
+  document.getElementById(&quot;list&quot;).innerHTML = Object.keys(data).map(n=&gt;{
+    const r=data[n].rows, f=isFlagged(n);
+    return `&lt;button class=&quot;resp ${n===current?&#x27;sel&#x27;:&#x27;&#x27;}&quot; data-n=&quot;${n}&quot;&gt;
+      &lt;div class=&quot;name&quot;&gt;${n}${f?&#x27;&lt;span class=&quot;tag flag&quot;&gt;Receiving fewer pings&lt;/span&gt;&#x27;:&#x27;&lt;span class=&quot;tag ok&quot;&gt;Normal&lt;/span&gt;&#x27;}&lt;/div&gt;
+      &lt;div class=&quot;sub&quot;&gt;${data[n].area} · ${r[7][0]} pings in latest week&lt;/div&gt;&lt;/button&gt;`;
+  }).join(&quot;&quot;);
+  document.querySelectorAll(&quot;.resp&quot;).forEach(b=&gt;b.onclick=()=&gt;{ current=b.dataset.n; render(); });
+}
+
+function flagHTML(n){
+  const r=data[n].rows, u=+usual(r).toFixed(1);
+  return `&lt;div class=&quot;flagbox&quot;&gt;
+    &lt;strong&gt;Receiving fewer pings&lt;/strong&gt;
+    &lt;p&gt;${n} had &lt;b&gt;${r[7][0]}&lt;/b&gt; ${r[7][0]===1?&#x27;ping&#x27;:&#x27;pings&#x27;} in the latest week, against a usual &lt;b&gt;${u}&lt;/b&gt; a week
+    (the average of the four weeks from 13 Jul). That is below the ${Math.round(THRESHOLD*100)}% flag level. The drop began in the week of 10 Aug.&lt;/p&gt;
+    &lt;button class=&quot;btn&quot; id=&quot;helpBtn&quot;&gt;What can I do?&lt;/button&gt;
+    &lt;div class=&quot;help&quot; id=&quot;help&quot;&gt;
+      &lt;b&gt;Contact Rook Support&lt;/b&gt; if you want this looked at. They can check the case and decide what to do, including a score reset.
+      &lt;pre id=&quot;summary&quot;&gt;Responder: ${n} (${data[n].area}), handler Kip
+Latest week: ${r[7][0]} pings vs usual ${u}
+Weeks 10 Aug to 31 Aug: pings ${r.slice(4).map(x=&gt;x[0]).join(&quot;, &quot;)}; missed ${r.slice(4).map(x=&gt;x[2]).join(&quot;, &quot;)}
+Last callout taken: week of 17 Aug&lt;/pre&gt;
+      &lt;button class=&quot;btn ghost&quot; id=&quot;copyBtn&quot;&gt;Copy this summary for Support&lt;/button&gt;
+      &lt;span id=&quot;copied&quot; style=&quot;margin-left:8px;color:var(--taken);display:none&quot;&gt;Copied&lt;/span&gt;
+    &lt;/div&gt;&lt;/div&gt;`;
+}
+
+function reportHTML(n){
+  const r=data[n].rows, u=usual(r);
+  if (view===&quot;table&quot;) {
+    return `&lt;table&gt;&lt;tr&gt;&lt;th&gt;Week starting&lt;/th&gt;&lt;th&gt;Pings received&lt;/th&gt;&lt;th&gt;Taken&lt;/th&gt;&lt;th&gt;Missed&lt;/th&gt;&lt;th&gt;Turned down&lt;/th&gt;&lt;/tr&gt;`+
+      r.map((x,i)=&gt;`&lt;tr class=&quot;${x[0]&lt;THRESHOLD*u?&#x27;low&#x27;:&#x27;&#x27;}&quot;&gt;&lt;td&gt;${weeks[i]}&lt;/td&gt;&lt;td&gt;&lt;b&gt;${x[0]}&lt;/b&gt;&lt;/td&gt;&lt;td&gt;${x[1]}&lt;/td&gt;&lt;td&gt;${x[2]}&lt;/td&gt;&lt;td&gt;${x[3]}&lt;/td&gt;&lt;/tr&gt;`).join(&quot;&quot;)+`&lt;/table&gt;`;
+  }
+  const max=Math.max(...Object.values(data).flatMap(d=&gt;d.rows.map(x=&gt;x[0])));
+  const h=170;
+  return `&lt;div class=&quot;chart&quot;&gt;`+r.map(x=&gt;`&lt;div class=&quot;col&quot;&gt;&lt;div class=&quot;n&quot;&gt;${x[0]}&lt;/div&gt;&lt;div class=&quot;stack&quot;&gt;
+      &lt;div class=&quot;seg&quot; style=&quot;height:${x[1]/max*h}px;background:var(--taken)&quot; title=&quot;Taken ${x[1]}&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;seg&quot; style=&quot;height:${x[2]/max*h}px;background:var(--missed)&quot; title=&quot;Missed ${x[2]}&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;seg&quot; style=&quot;height:${x[3]/max*h}px;background:var(--down)&quot; title=&quot;Turned down ${x[3]}&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;`).join(&quot;&quot;)+`&lt;/div&gt;
+    &lt;div class=&quot;labels&quot;&gt;${weeks.map(w=&gt;`&lt;div&gt;${w}&lt;/div&gt;`).join(&quot;&quot;)}&lt;/div&gt;
+    &lt;div class=&quot;legend&quot;&gt;&lt;span&gt;&lt;i style=&quot;background:var(--taken)&quot;&gt;&lt;/i&gt;Taken&lt;/span&gt;&lt;span&gt;&lt;i style=&quot;background:var(--missed)&quot;&gt;&lt;/i&gt;Missed&lt;/span&gt;&lt;span&gt;&lt;i style=&quot;background:var(--down)&quot;&gt;&lt;/i&gt;Turned down&lt;/span&gt;&lt;/div&gt;`;
+}
+
+function render(){
+  renderList();
+  const n=current;
+  document.getElementById(&quot;detail&quot;).innerHTML = `
+    &lt;h1&gt;${n}&lt;/h1&gt;&lt;div class=&quot;meta&quot;&gt;${data[n].area} · Weekly ping report, last 8 weeks&lt;/div&gt;
+    ${isFlagged(n)?flagHTML(n):&#x27;&#x27;}
+    &lt;div class=&quot;tabs&quot;&gt;&lt;button data-v=&quot;table&quot; class=&quot;${view===&#x27;table&#x27;?&#x27;on&#x27;:&#x27;&#x27;}&quot;&gt;Table&lt;/button&gt;&lt;button data-v=&quot;chart&quot; class=&quot;${view===&#x27;chart&#x27;?&#x27;on&#x27;:&#x27;&#x27;}&quot;&gt;Chart&lt;/button&gt;&lt;/div&gt;
+    ${reportHTML(n)}
+    &lt;div class=&quot;note&quot;&gt;Shaded rows are weeks below ${Math.round(THRESHOLD*100)}% of the responder&#x27;s usual. Counts only, and no personal details.
+    ${n===&quot;Meteor Mite&quot;?&#x27;Compare with &lt;a href=&quot;#&quot; id=&quot;cmpLink&quot;&gt;The Gale&lt;/a&gt;, who shares Eastgate and your console.&#x27;:&#x27;Compare with &lt;a href=&quot;#&quot; id=&quot;cmpLink&quot;&gt;Meteor Mite&lt;/a&gt;, who shares Eastgate and your console.&#x27;}&lt;/div&gt;`;
+  document.querySelectorAll(&quot;.tabs button&quot;).forEach(b=&gt;b.onclick=()=&gt;{ view=b.dataset.v; render(); });
+  const hb=document.getElementById(&quot;helpBtn&quot;);
+  if(hb){ hb.onclick=()=&gt;document.getElementById(&quot;help&quot;).classList.toggle(&quot;open&quot;);
+    document.getElementById(&quot;copyBtn&quot;).onclick=()=&gt;{
+      const t=document.getElementById(&quot;summary&quot;).textContent;
+      (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).catch(()=&gt;{}).finally(()=&gt;{ document.getElementById(&quot;copied&quot;).style.display=&quot;inline&quot;; });
+    }; }
+  document.getElementById(&quot;cmpLink&quot;).onclick=e=&gt;{ e.preventDefault(); current = n===&quot;Meteor Mite&quot;?&quot;The Gale&quot;:&quot;Meteor Mite&quot;; render(); };
+}
+render();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</template><template id="doc-responder">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;Rook Dispatch phone app – Responder prototype&lt;/title&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;style&gt;
+  :root { --ink:#1c2430; --mute:#6b7685; --line:#e1e5eb; --brand:#1f3a5f; --go:#2f7d4f; --warn:#b4351f; --warnbg:#fdecea; --info:#eaf0f8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#dfe4ea; font:14px/1.45 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial,sans-serif; color:var(--ink);
+         display:flex; gap:40px; justify-content:center; align-items:flex-start; padding:24px; flex-wrap:wrap; }
+  .phone { width:340px; height:640px; background:#fff; border-radius:34px; border:10px solid #121820; overflow:hidden; display:flex; flex-direction:column; position:relative; }
+  .status { height:28px; background:var(--brand); color:#fff; font-size:11px; display:flex; justify-content:space-between; padding:6px 18px 0; }
+  .app { background:var(--brand); color:#fff; padding:8px 16px 14px; }
+  .app b { font-size:17px; } .app div { font-size:12px; opacity:.8; }
+  .body { flex:1; overflow:auto; padding:14px; background:#f4f6f9; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:12px; }
+  .card.notice { background:var(--info); border-color:#c9d8ec; }
+  .card h3 { margin:0 0 6px; font-size:15px; }
+  .nums { display:flex; gap:10px; margin:8px 0; }
+  .nums div { flex:1; background:#fff; border-radius:8px; padding:8px; text-align:center; }
+  .nums b { display:block; font-size:20px; white-space:nowrap; }
+  .nums span { font-size:11px; color:var(--mute); }
+  .small { font-size:12px; color:var(--mute); }
+  .btn { display:block; width:100%; font:inherit; font-weight:600; padding:12px; border-radius:10px; border:1px solid var(--brand); background:var(--brand); color:#fff; cursor:pointer; margin-top:8px; }
+  .btn.go { background:var(--go); border-color:var(--go); font-size:16px; padding:14px; }
+  .btn.ghost { background:#fff; color:var(--brand); }
+  .btn.plain { background:none; border:0; color:var(--mute); font-weight:400; padding:6px; }
+  .timer { text-align:center; margin:14px 0; }
+  .timer .n { font-size:56px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .bar { height:8px; background:#e1e5eb; border-radius:4px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:var(--go); width:100%; transition:width 1s linear, background .3s; }
+  .bar i.low { background:var(--warn); }
+  .urgent { border:2px solid var(--go); }
+  .big { text-align:center; padding:26px 8px; }
+  .big .ic { font-size:40px; }
+  .controls { width:300px; font-size:13px; }
+  .controls h2 { margin:0 0 6px; font-size:16px; }
+  .controls .box { background:#fff; border-radius:10px; padding:12px 14px; margin-bottom:12px; border:1px solid var(--line); }
+  .controls button { font:inherit; padding:7px 10px; margin:3px 4px 3px 0; border:1px solid var(--brand); background:#fff; color:var(--brand); border-radius:6px; cursor:pointer; }
+  .controls button.primary { background:var(--brand); color:#fff; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;phone&quot;&gt;
+  &lt;div class=&quot;status&quot;&gt;&lt;span&gt;9:41&lt;/span&gt;&lt;span&gt;Rook&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;app&quot;&gt;&lt;b&gt;Rook Dispatch&lt;/b&gt;&lt;div&gt;Meteor Mite · Available&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;body&quot; id=&quot;screen&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;controls&quot;&gt;
+  &lt;h2&gt;Prototype controls&lt;/h2&gt;
+  &lt;div class=&quot;box&quot;&gt;
+    These controls are not part of the app. They stand in for events the phone would get.
+    &lt;div style=&quot;margin-top:8px&quot;&gt;
+      &lt;button class=&quot;primary&quot; id=&quot;sendPing&quot;&gt;Send me a ping&lt;/button&gt;
+      &lt;button id=&quot;skip&quot;&gt;Skip to 5 seconds left&lt;/button&gt;
+      &lt;button id=&quot;home&quot;&gt;Back to home&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;box&quot;&gt;
+    &lt;b&gt;What to try&lt;/b&gt;
+    &lt;ol style=&quot;padding-left:18px;margin:6px 0&quot;&gt;
+      &lt;li&gt;On Home, read the &quot;Recent activity&quot; card and tap &lt;i&gt;See recent pings&lt;/i&gt;.&lt;/li&gt;
+      &lt;li&gt;Send a ping, then tap &lt;i&gt;Take it&lt;/i&gt; inside 60 seconds.&lt;/li&gt;
+      &lt;li&gt;Send another and let it run out (use &quot;Skip to 5 seconds left&quot;). See what the phone says. Click OK to clear it, or send another ping without clicking OK to see it stay on the next ping.&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;box small&quot;&gt;Numbers on the card are Meteor Mite&#x27;s real weekly counts (1 ping in the week of 31 Aug; the last 10 pings are the real ones). The wording is proposed, not built.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+let notices = [&quot;5 Sep, 3:06 pm&quot;];  // expired pings the responder has not yet clicked OK on
+let screen = &quot;home&quot;, left = 60, timerId = null, cardOpen = false;
+const el = document.getElementById(&quot;screen&quot;);
+
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+
+function homeHTML(){
+  return `
+  &lt;div class=&quot;card notice&quot;&gt;
+    &lt;h3&gt;Recent activity&lt;/h3&gt;
+    &lt;div class=&quot;nums&quot;&gt;&lt;div&gt;&lt;b&gt;1&lt;/b&gt;&lt;span&gt;Pings this week&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;5 Sep&lt;/b&gt;&lt;span&gt;Last ping&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;19 Aug&lt;/b&gt;&lt;span&gt;Last callout accepted&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;button class=&quot;btn ghost&quot; id=&quot;seeWeeks&quot;&gt;${cardOpen?&quot;Hide recent pings&quot;:&quot;See recent pings&quot;}&lt;/button&gt;
+    ${cardOpen?weeksHTML():&quot;&quot;}
+  &lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;h3&gt;You are available&lt;/h3&gt;&lt;div class=&quot;small&quot;&gt;You will get a ping when a callout needs you. Each ping stays on your screen for 60 seconds.&lt;/div&gt;&lt;/div&gt;`;
+}
+function weeksHTML(){
+  const p=[[&quot;5 Sep&quot;,&quot;3:06 pm&quot;,&quot;Missed&quot;],[&quot;29 Aug&quot;,&quot;9:15 am&quot;,&quot;Missed&quot;],[&quot;27 Aug&quot;,&quot;8:03 pm&quot;,&quot;Declined&quot;],[&quot;22 Aug&quot;,&quot;8:53 pm&quot;,&quot;Missed&quot;],[&quot;20 Aug&quot;,&quot;4:41 pm&quot;,&quot;Missed&quot;],[&quot;19 Aug&quot;,&quot;5:30 pm&quot;,&quot;Accepted&quot;],[&quot;18 Aug&quot;,&quot;7:37 am&quot;,&quot;Declined&quot;],[&quot;16 Aug&quot;,&quot;11:16 am&quot;,&quot;Missed&quot;],[&quot;15 Aug&quot;,&quot;7:40 pm&quot;,&quot;Accepted&quot;],[&quot;15 Aug&quot;,&quot;3:18 pm&quot;,&quot;Accepted&quot;]];
+  return `&lt;div style=&quot;margin-top:10px;background:#fff;border-radius:8px;padding:2px 10px&quot;&gt;`+p.map(([d,t,o])=&gt;`&lt;div style=&quot;display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)&quot;&gt;&lt;span&gt;${d}, ${t}&lt;/span&gt;&lt;b&gt;${o}&lt;/b&gt;&lt;/div&gt;`).join(&quot;&quot;)+`&lt;/div&gt;`;
+}
+function pingHTML(){
+  const list = notices.map((w,i)=&gt;`&lt;div class=&quot;card notice&quot; style=&quot;text-align:left&quot;&gt;&lt;div class=&quot;small&quot; style=&quot;color:var(--ink)&quot;&gt;A callout on ${w} has been offered to the next responder.&lt;/div&gt;&lt;button class=&quot;btn ghost&quot; data-ok=&quot;${i}&quot; style=&quot;margin-top:6px;padding:8px&quot;&gt;OK&lt;/button&gt;&lt;/div&gt;`).join(&quot;&quot;);
+  return `
+  &lt;div class=&quot;card urgent&quot;&gt;
+    &lt;div class=&quot;small&quot;&gt;New callout · Eastgate&lt;/div&gt;
+    &lt;h3&gt;Callout needs a responder&lt;/h3&gt;
+    &lt;div class=&quot;small&quot;&gt;Water rescue support · about 8 min from you&lt;/div&gt;
+    &lt;div class=&quot;timer&quot;&gt;&lt;div class=&quot;n&quot; id=&quot;n&quot;&gt;${left}&lt;/div&gt;&lt;div class=&quot;small&quot;&gt;seconds to answer&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;bar&quot;&gt;&lt;i id=&quot;bar&quot; class=&quot;${left&lt;=10?&#x27;low&#x27;:&#x27;&#x27;}&quot; style=&quot;width:${left/60*100}%&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;button class=&quot;btn go&quot; id=&quot;take&quot;&gt;Take it&lt;/button&gt;
+    &lt;button class=&quot;btn ghost&quot; id=&quot;decline&quot;&gt;Turn down&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;small&quot; style=&quot;text-align:center;margin-bottom:12px&quot;&gt;If you do not answer, the callout is offered to the next responder.&lt;/div&gt;` + list;
+}
+function takenHTML(){ return `&lt;div class=&quot;card big&quot;&gt;&lt;div class=&quot;ic&quot;&gt;✅&lt;/div&gt;&lt;h3&gt;You took this callout&lt;/h3&gt;&lt;div class=&quot;small&quot;&gt;Your handler has been told. Head to Eastgate.&lt;/div&gt;&lt;button class=&quot;btn&quot; id=&quot;back&quot;&gt;Done&lt;/button&gt;&lt;/div&gt;`; }
+function declinedHTML(){ return `&lt;div class=&quot;card big&quot;&gt;&lt;div class=&quot;ic&quot;&gt;👍&lt;/div&gt;&lt;h3&gt;Turned down&lt;/h3&gt;&lt;div class=&quot;small&quot;&gt;The callout has been offered to the next responder.&lt;/div&gt;&lt;button class=&quot;btn&quot; id=&quot;back&quot;&gt;Done&lt;/button&gt;&lt;/div&gt;`; }
+function expiredHTML(){ return `&lt;div class=&quot;card big&quot;&gt;&lt;div class=&quot;ic&quot;&gt;⏱&lt;/div&gt;&lt;h3&gt;A callout on ${notices[0]} has been offered to the next responder&lt;/h3&gt;
+  &lt;div class=&quot;small&quot;&gt;It was offered to you for 60 seconds and went to someone else when the time ran out. Nothing else is needed from you.&lt;/div&gt;
+  &lt;div class=&quot;card notice&quot; style=&quot;margin-top:12px;text-align:left&quot;&gt;&lt;div class=&quot;small&quot;&gt;Missing pings you did not see? If this keeps happening, talk to your handler.&lt;/div&gt;&lt;/div&gt;
+  &lt;button class=&quot;btn&quot; id=&quot;ok&quot;&gt;OK&lt;/button&gt;&lt;/div&gt;`; }
+
+function show(s){
+  screen=s; stopTimer();
+  el.innerHTML = {home:homeHTML,ping:pingHTML,taken:takenHTML,declined:declinedHTML,expired:expiredHTML}[s]();
+  const b=id=&gt;document.getElementById(id);
+  if(b(&quot;seeWeeks&quot;)) b(&quot;seeWeeks&quot;).onclick=()=&gt;{ cardOpen=!cardOpen; show(&quot;home&quot;); };
+  if(b(&quot;back&quot;)) b(&quot;back&quot;).onclick=()=&gt;show(&quot;home&quot;);
+  if(b(&quot;ok&quot;)) b(&quot;ok&quot;).onclick=()=&gt;{ notices.shift(); show(&quot;home&quot;); };
+  if(s===&quot;ping&quot;){
+    document.querySelectorAll(&quot;[data-ok]&quot;).forEach(x=&gt;x.onclick=()=&gt;{ notices.splice(+x.dataset.ok,1); show(&quot;ping&quot;); });
+    b(&quot;take&quot;).onclick=()=&gt;show(&quot;taken&quot;);
+    b(&quot;decline&quot;).onclick=()=&gt;show(&quot;declined&quot;);
+    timerId=setInterval(tick,1000);
+  }
+}
+function nowText(){
+  const d=new Date(), m=[&quot;Jan&quot;,&quot;Feb&quot;,&quot;Mar&quot;,&quot;Apr&quot;,&quot;May&quot;,&quot;Jun&quot;,&quot;Jul&quot;,&quot;Aug&quot;,&quot;Sep&quot;,&quot;Oct&quot;,&quot;Nov&quot;,&quot;Dec&quot;][d.getMonth()];
+  const h=d.getHours()%12||12, mm=String(d.getMinutes()).padStart(2,&quot;0&quot;);
+  return `${d.getDate()} ${m}, ${h}:${mm} ${d.getHours()&lt;12?&quot;am&quot;:&quot;pm&quot;}`;
+}
+function tick(){
+  left--;
+  if(left&lt;=0){ notices.unshift(nowText()); show(&quot;expired&quot;); return; }
+  document.getElementById(&quot;n&quot;).textContent=left;
+  const bar=document.getElementById(&quot;bar&quot;);
+  bar.style.width=(left/60*100)+&quot;%&quot;; bar.classList.toggle(&quot;low&quot;,left&lt;=10);
+}
+document.getElementById(&quot;sendPing&quot;).onclick=()=&gt;{ left=60; show(&quot;ping&quot;); };
+document.getElementById(&quot;skip&quot;).onclick=()=&gt;{ if(screen===&quot;ping&quot;){ left=5; document.getElementById(&quot;n&quot;).textContent=left; } };
+document.getElementById(&quot;home&quot;).onclick=()=&gt;show(&quot;home&quot;);
+show(&quot;home&quot;);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</template>
+  <p class="mute" style="font-size:13px">Click a responder, open the flag, try the report tabs. The screens are built into this page. Open them full size: <a href="05-super-speed/prototype-handler.html" style="color:var(--blue)">handler</a> · <a href="05-super-speed/prototype-responder.html" style="color:var(--blue)">responder</a>.</p>
 </div></section>
 
 <!-- 8 MODULE 6 -->
@@ -196,10 +644,10 @@
     <div class="stack">
       <div class="prompt"><span class="tag">Module 6 · written this session (prompts.md not yet filled by wrap-up)</span><q>“I want to save a habit as something I can reuse. When I review a brief before it goes any further, here's what I actually check for: - It names who owns it - It says how we'll know it worked - The scope at the end matches the scope at the start - It explains the problem before it proposes a fix. Turn that into a skill called review-checklist, so I can point it at any brief and get the same check every time, without me explaining it again.”</q></div>
       <div class="checks">
-        <div class="chk"><span class="no y">1</span><div><b>Owner named.</b> 4.2 had no brief in the wiki; Marcus's "was that a decision or did it just fall out that way?" still has no answer.</div></div>
-        <div class="chk"><span class="no y">2</span><div><b>Success measure.</b> The aggregate taken rate looked fine for weeks. A measure per responder would have shown the four.</div></div>
-        <div class="chk"><span class="no y">3</span><div><b>Scope matches start to end.</b> 4.2 bundled a timeout cut and a weighting change; each should be one named change with its own check.</div></div>
-        <div class="chk"><span class="no y">4</span><div><b>Problem before proposal.</b> Forces "why" before "what", the order the handover warned about when calls were made faster than they were checked.</div></div>
+        <div class="chk"><span class="bdg pass">1</span><div><b>Owner named.</b> 4.2 had no brief in the wiki; Marcus's "was that a decision or did it just fall out that way?" still has no answer.</div></div>
+        <div class="chk"><span class="bdg pass">2</span><div><b>Success measure.</b> The aggregate taken rate looked fine for weeks. A measure per responder would have shown the four.</div></div>
+        <div class="chk"><span class="bdg pass">3</span><div><b>Scope matches start to end.</b> 4.2 bundled a timeout cut and a weighting change; each should be one named change with its own check.</div></div>
+        <div class="chk"><span class="bdg pass">4</span><div><b>Problem before proposal.</b> Forces "why" before "what", the order the handover warned about when calls were made faster than they were checked.</div></div>
       </div>
     </div>
     <div class="stack">
@@ -300,7 +748,7 @@ function el(n,a,t){const e=document.createElementNS('http://www.w3.org/2000/svg'
 // prototype tabs
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-  document.getElementById('proto').src=b.dataset.f;
+  document.getElementById('proto').srcdoc=document.getElementById('doc-'+b.dataset.f).content.textContent;
 });
 </script>
 </body>
