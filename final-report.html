@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Release 4.2: what happened, the fix, and how we stop it recurring</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{--bg:#0e1726;--bg2:#15213a;--card:#1b2a47;--ink:#eef2f8;--mute:#9fb0c9;--line:#2c3e60;
+        --blue:#5aa9ff;--green:#4cc38a;--amber:#f2a541;--red:#ff6b5b;--violet:#a98bff}
+  *{box-sizing:border-box}
+  html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+  section{min-height:100vh;scroll-snap-align:start;padding:72px 7vw 56px;display:flex;flex-direction:column;justify-content:center;position:relative;border-bottom:1px solid var(--line)}
+  section:nth-of-type(even){background:var(--bg2)}
+  .wrap{max-width:1100px;width:100%;margin:0 auto}
+  .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:10px}
+  h1{font-size:clamp(34px,6vw,64px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em}
+  h2{font-size:clamp(26px,3.8vw,40px);line-height:1.12;margin:0 0 14px;letter-spacing:-.01em}
+  p.lead{font-size:clamp(17px,2vw,21px);color:#cbd6e8;max-width:760px;margin:0 0 22px}
+  .mute{color:var(--mute)}
+  nav{position:fixed;right:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:10}
+  nav a{width:10px;height:10px;border-radius:50%;background:var(--line);display:block;transition:.2s}
+  nav a.on{background:var(--blue);transform:scale(1.5)}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .tile .n{font-size:44px;font-weight:800;line-height:1;letter-spacing:-.02em}
+  .tile .l{color:var(--mute);font-size:14px;margin-top:6px}
+  .red{color:var(--red)}.green{color:var(--green)}.amber{color:var(--amber)}.blue{color:var(--blue)}.violet{color:var(--violet)}
+  .prompt{background:#0a111e;border:1px solid var(--line);border-left:4px solid var(--violet);border-radius:10px;padding:14px 16px;margin:0}
+  .prompt .tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);font-weight:700;display:block;margin-bottom:6px}
+  .prompt q{font-size:15px;color:#e4e9f4;quotes:none;display:block;font-style:italic}
+  .finding{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:10px;padding:14px 16px}
+  .finding .tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);font-weight:700;display:block;margin-bottom:6px}
+  .pair{display:grid;gap:14px;grid-template-columns:1fr}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  svg text{fill:var(--mute);font-size:11px}
+  .bar{transform-origin:bottom;transform:scaleY(0);transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+  .in .bar{transform:scaleY(1)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:6px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+  .timeline{display:flex;gap:0;margin:22px 0;position:relative}
+  .timeline .st{flex:1;padding-top:26px;position:relative;font-size:14px}
+  .timeline .st:before{content:"";position:absolute;top:8px;left:0;right:0;height:3px;background:var(--line)}
+  .timeline .st:after{content:"";position:absolute;top:2px;left:0;width:15px;height:15px;border-radius:50%;background:var(--blue)}
+  .timeline .st.bad:after{background:var(--red)}
+  .timeline b{display:block}
+  pre.diff{background:#0a111e;border:1px solid var(--line);border-radius:10px;padding:14px 16px;font:13px/1.7 ui-monospace,Menlo,monospace;overflow:auto;margin:0}
+  .del{color:var(--red)}.add{color:var(--green)}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .tabs{display:flex;gap:8px;margin-bottom:10px}
+  .tabs button{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer}
+  .tabs button.on{background:var(--blue);color:#06101f;border-color:var(--blue);font-weight:700}
+  iframe{width:100%;height:540px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .checks{display:grid;gap:10px}
+  .chk{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .chk .no{flex:none;width:44px;text-align:center;font-weight:800;font-size:12px;border-radius:6px;padding:4px 0}
+  .y{background:#173b2c;color:var(--green)}.n{background:#4a1f1c;color:var(--red)}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:center}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--mute);font-weight:600;font-size:12px}
+  .hint{position:fixed;left:18px;bottom:14px;font-size:12px;color:var(--mute);z-index:10}
+  @media(max-width:700px){nav{display:none}.timeline{flex-direction:column}.timeline .st{padding:0 0 14px 28px}.timeline .st:before{top:0;bottom:0;left:7px;right:auto;width:3px;height:auto}.timeline .st:after{top:2px}}
+</style>
+</head>
+<body>
+<nav id="nav"></nav>
+<div class="hint">↑ ↓ or scroll</div>
+
+<!-- 1 TITLE -->
+<section id="s1"><div class="wrap">
+  <div class="kicker">Rook Dispatch · PM report · October 2026</div>
+  <h1>Release 4.2 took four responders offline, and the average hid it.</h1>
+  <p class="lead">What happened, the evidence behind it, the fix I prototyped, and the checklist that makes sure the next brief doesn't skip the questions 4.2 skipped.</p>
+  <div class="grid g3" style="margin-top:28px">
+    <div class="tile"><div class="n red">12 Aug</div><div class="l">4.2 shipped: two changes at once</div></div>
+    <div class="tile"><div class="n amber">4 of 16</div><div class="l">responders stopped getting pings</div></div>
+    <div class="tile"><div class="n green">6 modules</div><div class="l">each evidence point below links to the prompt that produced it</div></div>
+  </div>
+  <p class="mute" style="margin-top:26px;font-size:13px">Rook Industries is a fictional teaching scenario (Product School, Claude Code for PMs).</p>
+</div></section>
+
+<!-- 2 WHAT HAPPENED -->
+<section id="s2"><div class="wrap">
+  <div class="kicker">What happened</div>
+  <h2>Two changes shipped together, and a rule nobody had revisited since 2019 did the rest.</h2>
+  <div class="timeline">
+    <div class="st"><b>Before 12 Aug</b>Ping wait 90 s. Taken rate flat at 75–78% for six weeks. Support: 5–8 tickets a week.</div>
+    <div class="st bad"><b>12 Aug: release 4.2</b>Ping wait cut to 60 s <i>and</i> proximity weighted up over recent acceptance.</div>
+    <div class="st bad"><b>Mid-Aug</b>Misses jump from ~2% to 12–21%. Four responders miss most of what they get, then stop being pinged.</div>
+    <div class="st"><b>Early Sept</b>Aggregate taken rate recovers to 73%, partly because the four dropped out of the numbers.</div>
+  </div>
+  <div class="grid g2">
+    <div class="tile"><b>The mechanism (from the routing code)</b>
+      <p class="mute" style="margin:8px 0 0">A missed ping counts as a decline (−0.12) while a taken ping earns only +0.08, and scores never decay (a 2019 TODO). Once a responder drops down the order they get fewer pings, so they have almost no way to earn the score back.</p></div>
+    <div class="tile"><b>What we can't explain</b>
+      <p class="mute" style="margin:8px 0 0">Why these four missed 59% of pings after 12 Aug while the other twelve missed 14%. There's no device or answer-time data in the pings table, so this stays an open question rather than a finding.</p></div>
+  </div>
+</div></section>
+
+<!-- 3 MODULE 1 -->
+<section id="s3"><div class="wrap">
+  <div class="kicker">Module 1 · Origin Story</div>
+  <h2>The step is on the release date, not a gradual slide.</h2>
+  <div class="pair" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="chartbox" id="c1">
+      <svg id="chart1" viewBox="0 0 560 270" width="100%"></svg>
+      <div class="legend"><span><i style="background:var(--green)"></i>Taken % of pings</span><span><i style="background:var(--red)"></i>Missed % of pings</span></div>
+    </div>
+    <div class="stack">
+      <div class="prompt"><span class="tag">Module 1 · prompt 4</span><q>“interviews and weekly numbers please”</q></div>
+      <div class="finding"><span class="tag">Finding</span>Taken rate sat at 75–78% for six weeks, then fell to 54.2% in the week of 10 Aug. Missed pings went from 1.2–3.4% to 21.5%. Tickets rose from 5–8 a week to 20–32. A step on the release date cuts against the "it's seasonal, recovers in September" explanation in the handover.</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 4 MODULE 2 -->
+<section id="s4"><div class="wrap">
+  <div class="kicker">Module 2 · Super Hearing</div>
+  <h2>Interviews and tickets agree on two problems, and tickets understate the worse one.</h2>
+  <div class="grid g3">
+    <div class="tile"><div class="n amber">15</div><div class="l">tickets: callout "gone before I could answer" (11 responders, from 12 Aug, the 60 s wait)</div></div>
+    <div class="tile"><div class="n red">30</div><div class="l">tickets: phone not going off. Farlight and The Undertow collapsed (last taken 14 and 17 Aug)</div></div>
+    <div class="tile"><div class="n violet">0</div><div class="l">tickets from the handlers of Meteor Mite (Kip) and Vesper (Aunt Dot), who collapsed the same way</div></div>
+  </div>
+  <div class="pair" style="margin-top:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="prompt"><span class="tag">Module 2 · prompt 12</span><q>“let's move back to just the interviews and tickets - can you compare those and see what is inconsistent between them?”</q></div>
+    <div class="finding"><span class="tag">Finding</span>Two of the four hardest-hit responders have handlers who never filed a ticket, though both describe quiet weeks in interviews. Counting tickets alone would have underrated the damage.</div>
+  </div>
+</div></section>
+
+<!-- 5 MODULE 3 -->
+<section id="s5"><div class="wrap">
+  <div class="kicker">Module 3 · Rewind</div>
+  <h2>Four responders fell from 49 pings a week to 3. The other twelve absorbed the work.</h2>
+  <div class="pair" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="chartbox" id="c2">
+      <svg id="chart2" viewBox="0 0 560 280" width="100%"></svg>
+      <div class="legend"><span><i style="background:var(--red)"></i>Farlight, Meteor Mite, The Undertow, Vesper</span><span><i style="background:var(--blue)"></i>Other 12 responders</span></div>
+    </div>
+    <div class="stack">
+      <div class="prompt"><span class="tag">Module 3 · prompt 3</span><q>“yes, let's look at weekly outcomes before and after 1.2. I'm interested in the rates by week that you mentioned, and also: 1) interested in number of callouts that ever reached each responder each week 2) how many callouts were never picked up per week”</q></div>
+      <div class="finding"><span class="tag">Finding</span>Pings to the four: ~49 a week → 43 → 16 → 6 → 3, with none taken since 19 Aug. Overall pings barely moved (170s), which is how the aggregate hid it. Never-taken callouts doubled, from 5.5% to 11.1%, all on a missed ping.</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 6 MODULE 4 -->
+<section id="s6"><div class="wrap">
+  <div class="kicker">Module 4 · X-Ray Vision</div>
+  <h2>The only code change in 4.2 was a config file with three numbers.</h2>
+  <div class="pair" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <pre class="diff"><span class="mute"># config.py (4.2)</span>
+<span class="del">- OFFER_TIMEOUT_SECONDS = 90</span>
+<span class="add">+ OFFER_TIMEOUT_SECONDS = 60</span>
+<span class="del">- WEIGHT_PROXIMITY = 0.45</span>
+<span class="add">+ WEIGHT_PROXIMITY = 0.60</span>
+<span class="del">- WEIGHT_RECENT_ACCEPTANCE = 0.40</span>
+<span class="add">+ WEIGHT_RECENT_ACCEPTANCE = 0.25</span>
+  WEIGHT_CAPABILITY_MATCH = 0.15  <span class="mute"># unchanged</span>
+
+  ACCEPTANCE_CREDIT = 0.08
+  DECLINE_PENALTY   = 0.12  <span class="mute"># a miss counts the same</span></pre>
+    <div class="stack">
+      <div class="prompt"><span class="tag">Module 4 · prompt 1</span><q>“Please look at the code changes that were included in 4.2 and give a summary of what the changes are. Quote every section of the code that changed in this release”</q></div>
+      <div class="finding"><span class="tag">Finding</span>Home-area responders pinged first fell from 80% to 61%. Replaying the score history shows the four's acceptance score falling from ~0.85–0.94 to 0.00, while the other twelve stayed at 0.77–0.93. Reverting the weights alone isn't shown to help, because the old weights starved the four just as much on the same history.</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 7 MODULE 5 -->
+<section id="s7"><div class="wrap">
+  <div class="kicker">Module 5 · Super Speed · the fix</div>
+  <h2>Decay old misses, soften the penalty, and tell handlers when a responder's pings drop.</h2>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="tile"><b class="blue">Routing</b><div class="l">Scores decay (~14-day half-life) and a miss costs less than a turn-down (e.g. −0.06 vs −0.12). The 60 s wait stays.</div></div>
+    <div class="tile"><b class="amber">Handlers</b><div class="l">A "Receiving fewer pings" flag when the last 7 days fall under 50% of the prior 4-week average, plus an 8-week ping report.</div></div>
+    <div class="tile"><b class="green">Responders</b><div class="l">A "Recent activity" card, and expired pings that say what happened until the responder clicks OK.</div></div>
+  </div>
+  <div class="pair" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-bottom:14px">
+    <div class="prompt"><span class="tag">Module 5 · prompt 20</span><q>“Take the brief you just wrote and build me two working prototypes, one for the handler perspective and one for the responder perspective, actual screens I can click through, not a description of one. Save them as 05-super-speed/prototype-handler.html and 05-super-speed/prototype-responder.html, files I can just open in my browser. Show me where this would actually happen, and make at least one thing on it respond when I click it.”</q></div>
+    <div class="finding"><span class="tag">Artifact</span>Two clickable prototypes (live below). Meteor Mite and The Gale's weekly counts and Meteor Mite's last 10 pings are real data from the pings table; callout details and support text are invented.</div>
+  </div>
+  <div class="tabs"><button class="on" data-f="05-super-speed/prototype-handler.html">Handler console</button><button data-f="05-super-speed/prototype-responder.html">Responder phone</button></div>
+  <iframe id="proto" src="05-super-speed/prototype-handler.html" title="Prototype"></iframe>
+  <p class="mute" style="font-size:13px">Click a responder, open the flag, try the report tabs. If the frame is blank, open the file directly from the repo folder.</p>
+</div></section>
+
+<!-- 8 MODULE 6 -->
+<section id="s8"><div class="wrap">
+  <div class="kicker">Module 6 · Sidekicks · keeping it from happening again</div>
+  <h2>The review-checklist skill asks the four questions 4.2 never answered, every time.</h2>
+  <div class="pair" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="stack">
+      <div class="prompt"><span class="tag">Module 6 · written this session (prompts.md not yet filled by wrap-up)</span><q>“I want to save a habit as something I can reuse. When I review a brief before it goes any further, here's what I actually check for: - It names who owns it - It says how we'll know it worked - The scope at the end matches the scope at the start - It explains the problem before it proposes a fix. Turn that into a skill called review-checklist, so I can point it at any brief and get the same check every time, without me explaining it again.”</q></div>
+      <div class="checks">
+        <div class="chk"><span class="no y">1</span><div><b>Owner named.</b> 4.2 had no brief in the wiki; Marcus's "was that a decision or did it just fall out that way?" still has no answer.</div></div>
+        <div class="chk"><span class="no y">2</span><div><b>Success measure.</b> The aggregate taken rate looked fine for weeks. A measure per responder would have shown the four.</div></div>
+        <div class="chk"><span class="no y">3</span><div><b>Scope matches start to end.</b> 4.2 bundled a timeout cut and a weighting change; each should be one named change with its own check.</div></div>
+        <div class="chk"><span class="no y">4</span><div><b>Problem before proposal.</b> Forces "why" before "what", the order the handover warned about when calls were made faster than they were checked.</div></div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="chartbox"><b>First run: the four wiki briefs</b>
+        <table style="margin-top:8px"><tr><th>Brief</th><th>Owner</th><th>Measure</th><th>Scope</th><th>Problem first</th></tr>
+          <tr><td>Bulk Callout</td><td class="red">NO</td><td class="green">yes</td><td class="green">yes</td><td class="green">yes</td></tr>
+          <tr><td>Handler Phone App</td><td class="green">yes</td><td class="green">yes</td><td class="green">yes</td><td class="red">NO</td></tr>
+          <tr><td>Requisition Approval Chains</td><td class="green">yes</td><td class="green">yes</td><td class="red">NO</td><td class="green">yes</td></tr>
+          <tr><td>Routing Override Audit Log</td><td class="green">yes</td><td class="red">NO</td><td class="green">yes</td><td class="green">yes</td></tr>
+        </table><p class="mute" style="font-size:13px;margin:10px 0 0">4 briefs, 4 flagged, one each. Same result as the 13 Oct scheduled run.</p></div>
+      <div class="finding"><span class="tag">Applied to my own Module 5 one-pager</span>It flagged two things I'd have missed: no named owner for the work, and a score-reset tool for Support that appears only in the risks, though the handler flow depends on it. Both go on my fix list before this goes to Helen.</div>
+      <div class="finding" style="border-left-color:var(--blue)"><span class="tag" style="color:var(--blue)">Habit</span>Scheduled to run every Monday around 8:11 on the briefs folder and report what it finds.</div>
+    </div>
+  </div>
+  <p class="mute" style="margin-top:14px;font-size:14px"><b>Limit:</b> the skill reviews briefs, not code. It won't catch a bad weight on its own; it makes sure a change like that has an owner, a measure and a stated scope before it ships.</p>
+</div></section>
+
+<!-- 9 NEXT -->
+<section id="s9"><div class="wrap">
+  <div class="kicker">Where this stands</div>
+  <h2>What's settled, and what's still open.</h2>
+  <div class="grid g2">
+    <div class="tile"><b class="green">Settled</b>
+      <ul class="mute" style="margin:8px 0 0;padding-left:18px">
+        <li>The step is on 12 Aug, and the 60 s wait raised misses for most responders.</li>
+        <li>A miss costs more than a take earns and nothing decays, so a low score is hard to climb out of.</li>
+        <li>Aggregates hid four responders for weeks; track acceptance per responder.</li>
+        <li>The fix keeps 60 s and adds decay, a lighter miss penalty, a handler flag and a report.</li>
+      </ul></div>
+    <div class="tile"><b class="amber">Open</b>
+      <ul class="mute" style="margin:8px 0 0;padding-left:18px">
+        <li>Why the four miss 59% of pings. No device or answer-time data exists.</li>
+        <li>Decay and the lighter penalty are untested; replay on the pings data first. Decay alone left the four's replayed scores very low.</li>
+        <li>Support has no tool to reset a responder's score yet.</li>
+        <li>Data stops 6 Sep, so I can't confirm whether anyone has recovered since.</li>
+        <li>The one-pager needs a named owner and the reset tool brought into its scope.</li>
+      </ul></div>
+  </div>
+</div></section>
+
+<script>
+// side nav
+const secs=[...document.querySelectorAll('section')];
+const nav=document.getElementById('nav');
+secs.forEach(s=>{const a=document.createElement('a');a.href='#'+s.id;nav.appendChild(a)});
+const dots=[...nav.children];
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){dots.forEach((d,i)=>d.classList.toggle('on',secs[i]===e.target));e.target.classList.add('in')}
+}),{threshold:.45});
+secs.forEach(s=>io.observe(s));
+
+// data from rook-database pings (weekly, Mon-start)
+const weeks=['29 Jun','6 Jul','13 Jul','20 Jul','27 Jul','3 Aug','10 Aug','17 Aug','24 Aug','31 Aug'];
+const taken=[76.7,77.1,76.4,75.0,77.6,77.9,54.2,65.8,66.7,72.7];
+const missed=[1.7,2.4,3.4,2.8,2.4,1.2,21.5,17.7,14.8,12.7];
+const total=[172,170,174,176,170,172,177,158,162,165];
+const four=[49,48,48,50,50,49,43,16,6,3];
+
+function el(n,a,t){const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e}
+
+// chart 1: lines
+(function(){
+  const s=document.getElementById('chart1'),W=560,H=270,L=40,R=14,T=14,B=34;
+  const x=i=>L+i*(W-L-R)/(weeks.length-1), y=v=>T+(100-v)*(H-T-B)/100;
+  [0,25,50,75,100].forEach(v=>{s.appendChild(el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:'#2c3e60'}));s.appendChild(el('text',{x:L-6,y:y(v)+4,'text-anchor':'end'},v+'%'))});
+  weeks.forEach((w,i)=>{if(i%1==0)s.appendChild(el('text',{x:x(i),y:H-12,'text-anchor':'middle'},w))});
+  s.appendChild(el('rect',{x:x(6)-6,y:T,width:W-R-x(6)+6,height:H-T-B,fill:'rgba(255,107,91,.08)'}));
+  s.appendChild(el('line',{x1:x(6),x2:x(6),y1:T,y2:H-B,stroke:'#ff6b5b','stroke-dasharray':'4 3'}));
+  s.appendChild(el('text',{x:x(6)+4,y:T+12,fill:'#ff6b5b',style:'fill:#ff6b5b;font-weight:700'},'4.2 ships 12 Aug'));
+  function line(d,c){
+    const p=el('polyline',{points:d.map((v,i)=>x(i)+','+y(v)).join(' '),fill:'none',stroke:c,'stroke-width':3,'stroke-linejoin':'round'});
+    const len=600;p.style.strokeDasharray=len;p.style.strokeDashoffset=len;p.style.transition='stroke-dashoffset 1.4s ease';s.appendChild(p);
+    d.forEach((v,i)=>{s.appendChild(el('circle',{cx:x(i),cy:y(v),r:3.5,fill:c}))});
+    const anim=()=>{p.style.strokeDashoffset=0};
+    new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){anim();o.disconnect()}},{threshold:.4}).observe(s);
+  }
+  line(taken,'#4cc38a');line(missed,'#ff6b5b');
+  s.appendChild(el('text',{x:x(6)+8,y:y(54.2)+16,style:'fill:#4cc38a;font-weight:700'},'54%'));
+  s.appendChild(el('text',{x:x(6)+8,y:y(21.5)-8,style:'fill:#ff6b5b;font-weight:700'},'21.5%'));
+})();
+
+// chart 2: stacked bars
+(function(){
+  const s=document.getElementById('chart2'),W=560,H=280,L=40,R=10,T=14,B=34;
+  const max=200,y=v=>T+(max-v)*(H-T-B)/max,bw=(W-L-R)/weeks.length;
+  [0,50,100,150,200].forEach(v=>{s.appendChild(el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:'#2c3e60'}));s.appendChild(el('text',{x:L-6,y:y(v)+4,'text-anchor':'end'},v))});
+  weeks.forEach((w,i)=>{
+    const x0=L+i*bw+6,w0=bw-12,o=total[i]-four[i];
+    const r1=el('rect',{x:x0,y:y(o),width:w0,height:y(0)-y(o),fill:'#5aa9ff',class:'bar',rx:2});
+    const r2=el('rect',{x:x0,y:y(o+four[i]),width:w0,height:y(o)-y(o+four[i]),fill:'#ff6b5b',class:'bar',rx:2});
+    r1.style.transitionDelay=r2.style.transitionDelay=(i*60)+'ms';
+    s.appendChild(r1);s.appendChild(r2);
+    s.appendChild(el('text',{x:x0+w0/2,y:H-12,'text-anchor':'middle'},w));
+    if(i==0||i>=6)s.appendChild(el('text',{x:x0+w0/2,y:y(o+four[i])-4,'text-anchor':'middle',style:'fill:#ff6b5b;font-weight:700'},four[i]));
+  });
+})();
+
+// prototype tabs
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  document.getElementById('proto').src=b.dataset.f;
+});
+</script>
+</body>
+</html>
