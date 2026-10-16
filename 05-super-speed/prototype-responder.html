@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rook Dispatch phone app – Responder prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --ink:#1c2430; --mute:#6b7685; --line:#e1e5eb; --brand:#1f3a5f; --go:#2f7d4f; --warn:#b4351f; --warnbg:#fdecea; --info:#eaf0f8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#dfe4ea; font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; color:var(--ink);
+         display:flex; gap:40px; justify-content:center; align-items:flex-start; padding:24px; flex-wrap:wrap; }
+  .phone { width:340px; height:640px; background:#fff; border-radius:34px; border:10px solid #121820; overflow:hidden; display:flex; flex-direction:column; position:relative; }
+  .status { height:28px; background:var(--brand); color:#fff; font-size:11px; display:flex; justify-content:space-between; padding:6px 18px 0; }
+  .app { background:var(--brand); color:#fff; padding:8px 16px 14px; }
+  .app b { font-size:17px; } .app div { font-size:12px; opacity:.8; }
+  .body { flex:1; overflow:auto; padding:14px; background:#f4f6f9; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:12px; }
+  .card.notice { background:var(--info); border-color:#c9d8ec; }
+  .card h3 { margin:0 0 6px; font-size:15px; }
+  .nums { display:flex; gap:10px; margin:8px 0; }
+  .nums div { flex:1; background:#fff; border-radius:8px; padding:8px; text-align:center; }
+  .nums b { display:block; font-size:20px; white-space:nowrap; }
+  .nums span { font-size:11px; color:var(--mute); }
+  .small { font-size:12px; color:var(--mute); }
+  .btn { display:block; width:100%; font:inherit; font-weight:600; padding:12px; border-radius:10px; border:1px solid var(--brand); background:var(--brand); color:#fff; cursor:pointer; margin-top:8px; }
+  .btn.go { background:var(--go); border-color:var(--go); font-size:16px; padding:14px; }
+  .btn.ghost { background:#fff; color:var(--brand); }
+  .btn.plain { background:none; border:0; color:var(--mute); font-weight:400; padding:6px; }
+  .timer { text-align:center; margin:14px 0; }
+  .timer .n { font-size:56px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .bar { height:8px; background:#e1e5eb; border-radius:4px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:var(--go); width:100%; transition:width 1s linear, background .3s; }
+  .bar i.low { background:var(--warn); }
+  .urgent { border:2px solid var(--go); }
+  .big { text-align:center; padding:26px 8px; }
+  .big .ic { font-size:40px; }
+  .controls { width:300px; font-size:13px; }
+  .controls h2 { margin:0 0 6px; font-size:16px; }
+  .controls .box { background:#fff; border-radius:10px; padding:12px 14px; margin-bottom:12px; border:1px solid var(--line); }
+  .controls button { font:inherit; padding:7px 10px; margin:3px 4px 3px 0; border:1px solid var(--brand); background:#fff; color:var(--brand); border-radius:6px; cursor:pointer; }
+  .controls button.primary { background:var(--brand); color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="status"><span>9:41</span><span>Rook</span></div>
+  <div class="app"><b>Rook Dispatch</b><div>Meteor Mite · Available</div></div>
+  <div class="body" id="screen"></div>
+</div>
+
+<div class="controls">
+  <h2>Prototype controls</h2>
+  <div class="box">
+    These controls are not part of the app. They stand in for events the phone would get.
+    <div style="margin-top:8px">
+      <button class="primary" id="sendPing">Send me a ping</button>
+      <button id="skip">Skip to 5 seconds left</button>
+      <button id="home">Back to home</button>
+    </div>
+  </div>
+  <div class="box">
+    <b>What to try</b>
+    <ol style="padding-left:18px;margin:6px 0">
+      <li>On Home, read the "Recent activity" card and tap <i>See recent pings</i>.</li>
+      <li>Send a ping, then tap <i>Take it</i> inside 60 seconds.</li>
+      <li>Send another and let it run out (use "Skip to 5 seconds left"). See what the phone says. Click OK to clear it, or send another ping without clicking OK to see it stay on the next ping.</li>
+    </ol>
+  </div>
+  <div class="box small">Numbers on the card are Meteor Mite's real weekly counts (1 ping in the week of 31 Aug; the last 10 pings are the real ones). The wording is proposed, not built.</div>
+</div>
+
+<script>
+let notices = ["5 Sep, 3:06 pm"];  // expired pings the responder has not yet clicked OK on
+let screen = "home", left = 60, timerId = null, cardOpen = false;
+const el = document.getElementById("screen");
+
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+
+function homeHTML(){
+  return `
+  <div class="card notice">
+    <h3>Recent activity</h3>
+    <div class="nums"><div><b>1</b><span>Pings this week</span></div><div><b>5 Sep</b><span>Last ping</span></div><div><b>19 Aug</b><span>Last callout accepted</span></div></div>
+    <button class="btn ghost" id="seeWeeks">${cardOpen?"Hide recent pings":"See recent pings"}</button>
+    ${cardOpen?weeksHTML():""}
+  </div>
+  <div class="card"><h3>You are available</h3><div class="small">You will get a ping when a callout needs you. Each ping stays on your screen for 60 seconds.</div></div>`;
+}
+function weeksHTML(){
+  const p=[["5 Sep","3:06 pm","Missed"],["29 Aug","9:15 am","Missed"],["27 Aug","8:03 pm","Declined"],["22 Aug","8:53 pm","Missed"],["20 Aug","4:41 pm","Missed"],["19 Aug","5:30 pm","Accepted"],["18 Aug","7:37 am","Declined"],["16 Aug","11:16 am","Missed"],["15 Aug","7:40 pm","Accepted"],["15 Aug","3:18 pm","Accepted"]];
+  return `<div style="margin-top:10px;background:#fff;border-radius:8px;padding:2px 10px">`+p.map(([d,t,o])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)"><span>${d}, ${t}</span><b>${o}</b></div>`).join("")+`</div>`;
+}
+function pingHTML(){
+  const list = notices.map((w,i)=>`<div class="card notice" style="text-align:left"><div class="small" style="color:var(--ink)">A callout on ${w} has been offered to the next responder.</div><button class="btn ghost" data-ok="${i}" style="margin-top:6px;padding:8px">OK</button></div>`).join("");
+  return `
+  <div class="card urgent">
+    <div class="small">New callout · Eastgate</div>
+    <h3>Callout needs a responder</h3>
+    <div class="small">Water rescue support · about 8 min from you</div>
+    <div class="timer"><div class="n" id="n">${left}</div><div class="small">seconds to answer</div></div>
+    <div class="bar"><i id="bar" class="${left<=10?'low':''}" style="width:${left/60*100}%"></i></div>
+    <button class="btn go" id="take">Take it</button>
+    <button class="btn ghost" id="decline">Turn down</button>
+  </div>
+  <div class="small" style="text-align:center;margin-bottom:12px">If you do not answer, the callout is offered to the next responder.</div>` + list;
+}
+function takenHTML(){ return `<div class="card big"><div class="ic">✅</div><h3>You took this callout</h3><div class="small">Your handler has been told. Head to Eastgate.</div><button class="btn" id="back">Done</button></div>`; }
+function declinedHTML(){ return `<div class="card big"><div class="ic">👍</div><h3>Turned down</h3><div class="small">The callout has been offered to the next responder.</div><button class="btn" id="back">Done</button></div>`; }
+function expiredHTML(){ return `<div class="card big"><div class="ic">⏱</div><h3>A callout on ${notices[0]} has been offered to the next responder</h3>
+  <div class="small">It was offered to you for 60 seconds and went to someone else when the time ran out. Nothing else is needed from you.</div>
+  <div class="card notice" style="margin-top:12px;text-align:left"><div class="small">Missing pings you did not see? If this keeps happening, talk to your handler.</div></div>
+  <button class="btn" id="ok">OK</button></div>`; }
+
+function show(s){
+  screen=s; stopTimer();
+  el.innerHTML = {home:homeHTML,ping:pingHTML,taken:takenHTML,declined:declinedHTML,expired:expiredHTML}[s]();
+  const b=id=>document.getElementById(id);
+  if(b("seeWeeks")) b("seeWeeks").onclick=()=>{ cardOpen=!cardOpen; show("home"); };
+  if(b("back")) b("back").onclick=()=>show("home");
+  if(b("ok")) b("ok").onclick=()=>{ notices.shift(); show("home"); };
+  if(s==="ping"){
+    document.querySelectorAll("[data-ok]").forEach(x=>x.onclick=()=>{ notices.splice(+x.dataset.ok,1); show("ping"); });
+    b("take").onclick=()=>show("taken");
+    b("decline").onclick=()=>show("declined");
+    timerId=setInterval(tick,1000);
+  }
+}
+function nowText(){
+  const d=new Date(), m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+  const h=d.getHours()%12||12, mm=String(d.getMinutes()).padStart(2,"0");
+  return `${d.getDate()} ${m}, ${h}:${mm} ${d.getHours()<12?"am":"pm"}`;
+}
+function tick(){
+  left--;
+  if(left<=0){ notices.unshift(nowText()); show("expired"); return; }
+  document.getElementById("n").textContent=left;
+  const bar=document.getElementById("bar");
+  bar.style.width=(left/60*100)+"%"; bar.classList.toggle("low",left<=10);
+}
+document.getElementById("sendPing").onclick=()=>{ left=60; show("ping"); };
+document.getElementById("skip").onclick=()=>{ if(screen==="ping"){ left=5; document.getElementById("n").textContent=left; } };
+document.getElementById("home").onclick=()=>show("home");
+show("home");
+</script>
+</body>
+</html>
